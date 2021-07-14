@@ -1,0 +1,129 @@
+A pan-cancer analysis of alternative splicing of splicing factors in 6904 patients
+
+####################################################################
+
+Great progress has been made in the investigation on mutation and expression of splicing factor. However, little is known on the role of alternative splicing of splicing factors across cancers. Here, we reported a pan-cancer analysis of alternative splicing of splicing factors spanning 6904 patients across 16 cancer types.
+
+#################################################################
+
+Data acquisition 
+1 Alternative splicing data of 16 cancers were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/PSIdownload.jsp) (e.g., PSI_download_BLCA.txt)
+2 Expression fpkm data of 16 cancers were obtained from TCGA cohort by UCSC Xena website. (https://gdc.xenahubs.net) (e.g., TCGA-BLCA.htseq_fpkm.tsv)
+3 Survival data of 16 cancers were obtained from TCGA cohort by UCSC Xena website. (https://gdc.xenahubs.net) (e.g., TCGA-BLCA.survival.tsv, TCGA-BLCA.GDC_phenotype.tsv)
+4 The hg19.gtf was obtained from UCSC. (http://genome.ucsc.edu/cgi-bin/hgTables)
+5 The hg19.fa was obtained from UCSC. (http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz)
+6 The information about exons in splice events were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/TCGA_SpliceSeq_Gene_Structure.zip)
+7 Gene_annotation files was obtained from TCGA cohort by UCSC Xena website. (https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap)
+
+#################################################################
+
+*Differential expression and alternative splicing
+
+1 Requirement data 
+
+1.1 Alternative splicing data of 16 cancers were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/PSIdownload.jsp)
+1.2 Expression fpkm data of 16 cancers were obtained from UCSC Xena website. (https://gdc.xenahubs.net)
+1.3 Gene_annotation files was obtained from UCSC Xena website. (https://gdc-hub.s3.us-east-1.amazonaws.com/download/gencode.v22.annotation.gene.probeMap)
+
+#Usage
+
+#1 Data preprocession:Obtain samples that have both alternative splicing data and expression data.
+Rscript Data_preprocession.R
+
+#2 Get paired samples:Get samples that have both cancer and normal pairs.
+python2.7 Paired.py
+
+#3 T-test and multiple test:A t-test was performed to identify different expressions with FPKM value and different alternative splicing with PSI value. P-values were corrected for multiple testing using the Benjamini-Hochberg method. 
+python2.7 T-testAndMultipleTest.py
+
+#################################################################
+
+**Survival
+
+1 Requirement data 
+
+1.1 Alternative splicing data of 16 cancers were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/PSIdownload.jsp)
+1.2 Survival data of 16 cancers were obtained from TCGA cohort by UCSC Xena website. (https://gdc.xenahubs.net) 
+
+#Usage
+
+#1 Multivariate cox regression analysis:to identify the association between the PSI value of the alternative splicing events and patients' overall survival.
+Rscript Data_preprocession.R
+
+#2 Kaplan-Meier:The Kaplan-Meier curves were used to plot the overall survival rates of the two groups, and the log-rank test was used to analyze the differences between the two groups.
+Rscript Kaplan-Meier.R
+
+#################################################################
+
+***Gtf2seq and Neoepitopes Prediction
+
+1 Requirement data
+
+1.1 The hg19.gtf was obtained from UCSC. (http://genome.ucsc.edu/cgi-bin/hgTables) 
+1.2 The hg19.fa was obtained from UCSC. (http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz)
+1.3 The information about exons in splice events were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/TCGA_SpliceSeq_Gene_Structure.zip)
+1.4 Different alternative splicing events. 
+Requirement software
+
+netMHCpan
+interproscan
+
+Usage
+
+1.Get CDS of alternative splicing events:We obtained the unspliced isoforms according to the chromosome coordinates of DASEs. The spliced isoforms were created by deleting, adding, or changing the exons (e.g., the skipped exon) from the corresponding unspliced isoforms.
+python2.7 Gtf2seq.py
+
+2.MergePeptide.py:Prepare peptides for Neoepitopes Prediction.
+python2.7 MergePeptide.py
+
+3.Run netMHCpan:We used NetMHCpan-4.1(36) to calculate the bind rank of peptides to HLA.
+python2.7 RunnetMHCpan.py
+
+4.Run Interproscan:We used InterProScan to analyze the loss/increase of the spliced protein domain. 
+sh RunInterproscan.sh
+
+#################################################################
+
+****Tsne
+
+1 Requirement data 
+
+1.1 Alternative splicing data of 16 cancers were obtained from TCGA SpliceSeq. (https://bioinformatics.mdanderson.org/TCGASpliceSeq/PSIdownload.jsp)
+
+#Usage
+
+#1 t-SNE analysis:We used a standard dimensionality reduction technique t-distributed stochastic neighbor embedding (t-SNE) to visualize the splicing across 16 cancer types.
+Rscript tsne.R
+
+#################################################################
+
+*****Plot
+
+#Usage
+
+1.1 Get Barplot
+Rscript Barplot.R
+
+1.2 Get Heatmap
+Rscript Heatmap.R
+
+1.3 Get Pointplot
+Rscript Pointplot.R
+
+#################################################################
+
+Contact
+
+Qinghua Jiang (Email: qhjiang@hit.edu.cn)
+
+Harbin Institute of Technology, Harbin 150000, China
+
+
+
+
+
+
+
+
+
+

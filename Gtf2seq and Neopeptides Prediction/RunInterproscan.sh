@@ -1,0 +1,1 @@
+./interproscan.sh -appl Pfam,PROSITEPATTERNS,PROSITEPROFILES,SMART -cpu 32 -i path_to/test/test.ForDomain.fa -f tsv -dp
